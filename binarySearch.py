@@ -1,4 +1,5 @@
-from random import randint
+#from random import randint
+import math
 
 class Array:    # the Array class
     def __init__(self, length, resolution):
@@ -9,7 +10,7 @@ class Array:    # the Array class
     def makeArray(self):
         return [i for i in range(self.resolution, (self.resolution * self.length)+1, self.resolution)]
 
-
+    # the following methods don't need any of the defined class attributes:
     @staticmethod
     def toTwenty():
         return Array(20, 1)
@@ -39,15 +40,49 @@ class binarySearch:
         return self.array[index]
 
     
+    def search(self, item):
+        self.array.sort()       # just to be sure
+        minIndex = 0
+        maxIndex = self.length - 1
+        minItem = self.array[minIndex]
+        maxItem = self.array[maxIndex]
+        self.count = 0
+
+        if item < minItem:  
+            return {"count": self.count, "index": -1}
+        if item > maxItem:
+            return {"count": self.count, "index": -1}
+
+        while 1:
+            
+            
+            if (item == minItem) or (item == maxItem):  # check if item equals either of the boundary items
+                if item == minItem:
+                    return {"count": self.count, "index": minIndex}
+                else:
+                    return {"count": self.count, "index": maxIndex}
+            
+            if not (((item - minItem)% self.resolution == 0) and ((maxItem - item) % self.resolution == 0)):
+                return {"count": self.count, "index": -1}
+
+            if (item - minItem) > (maxItem - item):     # if item is in second half:
+                minIndex = math.ceil((maxIndex + minIndex) / 2) # 'discard' first half
+            elif (item - minItem) < (maxItem - item):   # if item is in first half
+                maxIndex = math.ceil((maxIndex + minIndex) / 2)   # 'discard' second half
+            else:
+                return {"count": self.count, "index": int((minIndex + maxIndex)/2)} # item is in middle of remaining array space
+                
+            minItem = self.array[minIndex]
+            maxItem = self.array[maxIndex]
+            self.count += 1
+    
+    
+'''
+        # not binary search algorithm...emotionally attached; can't discard
     def search(self, item):     # modelled after the successive approximation register ADC :)
         randomIndex = randint(0, self.length - 1)   # first 'guess'
         randomItem = self.array[randomIndex]
         self.count = 0      # reset count for every time search() is called
-
-        if (item == self.array[0]):     # compare item with first and last elements. For the tests ;)
-            return {"count": self.count, "index": 0}
-        elif (item == self.array[self.length-1]):
-            return {"count": self.count, "index": self.length-1}
 
         while 1:    # infinite loop
             error = randomItem - item  # calculate error
@@ -65,3 +100,5 @@ class binarySearch:
                 return {"count": self.count, "index": -1}
             
             self.count += 1
+    '''
+    
